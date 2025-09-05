@@ -3,7 +3,7 @@
 
 #set text(font: ("Libertinus Serif", "Noto Serif CJK SC"))
 
-#show heading: set text(font: ("Libertinus Serif", "Heiti SC"))
+#show heading: set text(font: ("Libertinus Serif", "SimHei"))
 
 #show: university-theme.with(
   aspect-ratio: "16-9",
@@ -16,7 +16,9 @@
 
 #title-slide()
 
-== 基本信息
+= 基本信息
+
+==
 - *姓名*：章琳琅
 - *出生年月*：2004年5月
 - *本科院校及专业*: 哈尔滨工业大学（深圳） 通信工程
@@ -55,5 +57,13 @@
   - 通过仿真测试验证 CPU 功能正确性。
 ]
 #grid(columns: 2)[#image("cpu.png")][#image("tests.png")]
+
+== 对“工程硕博士培养改革专项”的认识 <touying:hidden>
+
+- *目标明确*：为了解决国家“卡脖子”的关键技术难题，让学生的能力和产业的真实需求精准对齐。
+
+- *培养模式*：“真问题、双导师、真刀真枪”的培养模式，能让学生把理论知识迅速转化为解决复杂问题的实战能力。
+
+- *和我的个人追求一致*: 我渴望能加入这个平台，在实战中淬炼成才，为企业和国家的技术突破贡献自己的力量。
 
 = 感谢聆听！
