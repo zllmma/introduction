@@ -1,242 +1,78 @@
-#import "@preview/touying:0.4.2": *
-#import "@preview/cetz:0.2.2"
-#import "@preview/fletcher:0.4.4" as fletcher: node, edge
-#import "@preview/ctheorems:1.1.2": *
+#import "@preview/touying:0.6.1": *
+#import themes.university: *
 
-// cetz and fletcher bindings for touying
-#let cetz-canvas = touying-reducer.with(reduce: cetz.canvas, cover: cetz.draw.hide.with(bounds: true))
-#let fletcher-diagram = touying-reducer.with(reduce: fletcher.diagram, cover: fletcher.hide)
+#set text(font: ("Libertinus Serif", "Noto Serif CJK SC"))
 
-// Register university theme
-// You can replace it with other themes and it can still work normally
-#let s = themes.university.register(aspect-ratio: "16-9")
+#show heading: set text(font: ("Libertinus Serif", "Heiti SC"))
 
-// Set the numbering of section and subsection
-#let s = (s.methods.numbering)(self: s, section: "1.", "1.1")
-
-// Set the speaker notes configuration
-// #let s = (s.methods.show-notes-on-second-screen)(self: s, right)
-
-// Global information configuration
-#let s = (s.methods.info)(
-  self: s,
-  title: [Title],
-  subtitle: [Subtitle],
-  author: [Authors],
-  date: datetime.today(),
-  institution: [Institution],
-)
-
-// Pdfpc configuration
-// typst query --root . ./example.typ --field value --one "<pdfpc-file>" > ./example.pdfpc
-#let s = (s.methods.append-preamble)(self: s, pdfpc.config(
-  duration-minutes: 30,
-  start-time: datetime(hour: 14, minute: 10, second: 0),
-  end-time: datetime(hour: 14, minute: 40, second: 0),
-  last-minutes: 5,
-  note-font-size: 12,
-  disable-markdown: false,
-  default-transition: (
-    type: "push",
-    duration-seconds: 2,
-    angle: ltr,
-    alignment: "vertical",
-    direction: "inward",
+#show: university-theme.with(
+  aspect-ratio: "16-9",
+  config-info(
+    title: [个人陈述报告],
+    author: [章琳琅],
+    date: datetime(day: 4, month: 9, year: 2025),
   ),
-))
-
-// Theroems configuration by ctheorems
-#show: thmrules.with(qed-symbol: $square$)
-#let theorem = thmbox("theorem", "Theorem", fill: rgb("#eeffee"))
-#let corollary = thmplain(
-  "corollary",
-  "Corollary",
-  base: "theorem",
-  titlefmt: strong
-)
-#let definition = thmbox("definition", "Definition", inset: (x: 1.2em, top: 1em))
-#let example = thmplain("example", "Example").with(numbering: none)
-#let proof = thmproof("proof", "Proof")
-
-// Extract methods
-#let (init, slides, touying-outline, alert, speaker-note) = utils.methods(s)
-#show: init
-
-#show strong: alert
-
-// Extract slide functions
-#let (slide, empty-slide) = utils.slides(s)
-#show: slides
-
-= Animation
-
-== Simple Animation
-
-We can use `#pause` to #pause display something later.
-
-#pause
-
-Just like this.
-
-#meanwhile
-
-Meanwhile, #pause we can also use `#meanwhile` to #pause display other content synchronously.
-
-#speaker-note[
-  + This is a speaker note.
-  + You won't see it unless you use `#let s = (s.math.show-notes-on-second-screen)(self: s, right)`
-]
-
-
-== Complex Animation - Mark-Style
-
-At subslide #utils.touying-wrapper((self: none) => str(self.subslide)), we can
-
-use #uncover("2-")[`#uncover` function] for reserving space,
-
-use #only("2-")[`#only` function] for not reserving space,
-
-#alternatives[call `#only` multiple times \u{2717}][use `#alternatives` function #sym.checkmark] for choosing one of the alternatives.
-
-
-== Complex Animation - Callback-Style
-
-#slide(repeat: 3, self => [
-  #let (uncover, only, alternatives) = utils.methods(self)
-
-  At subslide #self.subslide, we can
-
-  use #uncover("2-")[`#uncover` function] for reserving space,
-
-  use #only("2-")[`#only` function] for not reserving space,
-
-  #alternatives[call `#only` multiple times \u{2717}][use `#alternatives` function #sym.checkmark] for choosing one of the alternatives.
-])
-
-
-== Math Equation Animation
-
-Touying equation with `pause`:
-
-#touying-equation(`
-  f(x) &= pause x^2 + 2x + 1  \
-        &= pause (x + 1)^2  \
-`)
-
-#meanwhile
-
-Here, #pause we have the expression of $f(x)$.
-
-#pause
-
-By factorizing, we can obtain this result.
-
-
-== CeTZ Animation
-
-CeTZ Animation in Touying:
-
-#cetz-canvas({
-  import cetz.draw: *
-  
-  rect((0,0), (5,5))
-
-  (pause,)
-
-  rect((0,0), (1,1))
-  rect((1,1), (2,2))
-  rect((2,2), (3,3))
-
-  (pause,)
-
-  line((0,0), (2.5, 2.5), name: "line")
-})
-
-
-== Fletcher Animation
-
-Fletcher Animation in Touying:
-
-#fletcher-diagram(
-  node-stroke: .1em,
-  node-fill: gradient.radial(blue.lighten(80%), blue, center: (30%, 20%), radius: 80%),
-  spacing: 4em,
-  edge((-1,0), "r", "-|>", `open(path)`, label-pos: 0, label-side: center),
-  node((0,0), `reading`, radius: 2em),
-  edge((0,0), (0,0), `read()`, "--|>", bend: 130deg),
-  pause,
-  edge(`read()`, "-|>"),
-  node((1,0), `eof`, radius: 2em),
-  pause,
-  edge(`close()`, "-|>"),
-  node((2,0), `closed`, radius: 2em, extrude: (-2.5, 0)),
-  edge((0,0), (2,0), `close()`, "-|>", bend: -40deg),
 )
 
-= Theroems
-
-== Prime numbers
-
-#definition[
-  A natural number is called a #highlight[_prime number_] if it is greater
-  than 1 and cannot be written as the product of two smaller natural numbers.
-]
-#example[
-  The numbers $2$, $3$, and $17$ are prime.
-  @cor_largest_prime shows that this list is not exhaustive!
-]
-
-#theorem("Euclid")[
-  There are infinitely many primes.
-]
-#proof[
-  Suppose to the contrary that $p_1, p_2, dots, p_n$ is a finite enumeration
-  of all primes. Set $P = p_1 p_2 dots p_n$. Since $P + 1$ is not in our list,
-  it cannot be prime. Thus, some prime factor $p_j$ divides $P + 1$.  Since
-  $p_j$ also divides $P$, it must divide the difference $(P + 1) - P = 1$, a
-  contradiction.
-]
-
-#corollary[
-  There is no largest prime number.
-] <cor_largest_prime>
-#corollary[
-  There are infinitely many composite numbers.
-]
-
-#theorem[
-  There are arbitrarily long stretches of composite numbers.
-]
-
-#proof[
-  For any $n > 2$, consider $
-    n! + 2, quad n! + 3, quad ..., quad n! + n #qedhere
-  $
-]
+#title-slide()
 
 
-= Others
+== 自我介绍
+Good morning, Professors. My name is 章琳琅, a fourth-year student majoring in Communication Engineering.
 
-== Side-by-side
+During my undergraduate studies, I built a solid foundation in my major by mastering core subjects like *Signals and Systems* and *Communication Principles*. I soon realized, however, that the power of modern communication systems relies heavily on advanced software and algorithms.
 
-#slide(composer: (1fr, 1fr))[
-  First column.
-][
-  Second column.
-]
+This understanding, coupled with a genuine passion, motivated me to independently study the fundamentals of computer science. I immersed myself in courses on *Data Structures, Computer Architecture, and Operating System*. Through online courses and hands-on projects, I developed a strong proficiency in *C* and *Python*, as well as tools like the *Linux OS* and *Git*, building a solid foundation in practical engineering.
 
+My goal is to become a *well-rounded* communications professional with a full-stack vision. I am confident that my unique combination of skills—a deep understanding of communication fundamentals and proven abilities in software and algorithm design—will allow me to explore more deeply and push the boundaries in my future research.
 
-== Multiple Pages
+== 基本信息
+- *姓名*：章琳琅
+- *出生年月*：2004年5月
+- *专业*：通信工程
+- *平均学分绩*：81.5（排名49.3%）
+- *英语*：六级 485 分，四级 576 分
+- *获奖经历*：
+  - 第十六届全国大学生数学竞赛黑龙江赛区三等奖
+  - 第十五届蓝桥杯广东赛区单片机设计与开发大学组二等奖
 
-#lorem(200)
+= 项目经历
+== 基于惯性传感器的手写身份识别系统
+#set text(size: 15pt)
+- 该项目利用深度学习技术，基于手写过程中的惯性信号（加速度计和陀螺仪数据）进行身份识别。系统通过卷积变分自编码器（Conv-VAE）提取潜在特征，并将其与统计特征结合，然后通过一个简单的前馈神经网络，实现高准确率的身份识别。
 
+- 该项目为国家级大创项目，于 2025 年 6 月正式结题
 
-// appendix by freezing last-slide-number
-#let s = (s.methods.appendix)(self: s)
-#let (slide, empty-slide) = utils.slides(s)
+#grid(
+  columns: 2,
+  align: center
+)[#image("structure.png")][#image("jieti.png", width: 55%)]
+#pagebreak()
+#set text(16pt)
+- 我在项目中主要负责*系统集成*与*部署测试工作*。具体来说，项目包含了数据预处理、特征提取、模型训练等多个由不同成员开发的独立模块。我的任务是将这些模块进行高效整合与接口匹配，解决由于模块间环境依赖、数据格式不统一等问题引发的冲突，最终搭建起一个稳定、可复现的实验流程平台。
 
-== Appendix
+- 我还负责撰写了项目的文档，详尽说明了项目的架构和环境配置，大大降低了项目的使用门槛
 
-#slide[
-  Please pay attention to the current slide number.
-]
+#grid(align: center, columns: 2)[#figure(
+  image("commits.png", width: 100%),
+  caption: [我的一部分贡献],
+  supplement: none,
+)][#figure(
+  image("docs.png", width: 75%),
+  caption: [文档],
+  supplement: none,
+)]
+
+== xv6 操作系统实验
+#set text(20pt)
+- 该项目基于 xv6，一个简单的，用于教学的类 Unix 操作系统，进行了一系列编码实验，内容涵盖系统调用，内存管理，文件系统等。
+
+- 实验内容包括且不限于：
+  - 实现系统调用追踪功能，通过修改内核代码动态监控指定进程的系统调用行为，记录调用次数及参数。
+  - 通过用户空间和内核之间共享只读区域中的数据来加速某些系统调用。
+  - 设计写时复制（Copy-on-Write）机制，减少物理内存占用。
+  - 扩展文件系统，实现大文件存储，符号链接和 mmap 系统调用。
+
+- 该项目增进了我对操作系统的理解，提高了我的 c 语言编程能力和调试能力
+
+= 感谢聆听！
